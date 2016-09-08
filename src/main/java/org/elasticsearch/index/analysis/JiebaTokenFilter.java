@@ -23,6 +23,7 @@ public final class JiebaTokenFilter extends TokenFilter {
     private List<SegToken> array;
     private String type;
 
+    private final String blankSpace = " ";
     private final CharTermAttribute termAtt = addAttribute(CharTermAttribute.class);
     private final OffsetAttribute offsetAtt = addAttribute(OffsetAttribute.class);
     private final TypeAttribute typeAtt = addAttribute(TypeAttribute.class);
@@ -69,10 +70,12 @@ public final class JiebaTokenFilter extends TokenFilter {
         clearAttributes();
 
         SegToken token = tokenIter.next();
-        offsetAtt.setOffset(token.startOffset, token.endOffset);
-        String tokenString = token.word;
-        termAtt.copyBuffer(tokenString.toCharArray(), 0, tokenString.length());
-        typeAtt.setType("word");
+        if (!token.word.equals(blankSpace)) {
+            offsetAtt.setOffset(token.startOffset, token.endOffset);
+            String tokenString = token.word;
+            termAtt.copyBuffer(tokenString.toCharArray(), 0, tokenString.length());
+            typeAtt.setType("word");
+        }
         return true;
     }
 
@@ -81,5 +84,4 @@ public final class JiebaTokenFilter extends TokenFilter {
         super.reset();
         tokenIter = null;
     }
-
 }
